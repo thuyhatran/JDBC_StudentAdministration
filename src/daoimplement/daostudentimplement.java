@@ -86,6 +86,7 @@ public class daostudentimplement implements daointerface {
             std = new Student();
             std.setStudent_id(rslSet.getInt("student_id"));
             std.setFirstname(rslSet.getString("first_name"));
+            std.setLastname(rslSet.getString("last_name"));
             std.setGender(rslSet.getString("gender")); 
             std.setStartdate(rslSet.getString("start_date")); 
             students.add(std);            
@@ -292,9 +293,44 @@ public class daostudentimplement implements daointerface {
         }
     }
 
-   
-    
-    
-    
-    
+    //Method for student only
+     public void displayGrade() throws SQLException, ClassNotFoundException {
+        Statement statement = JDBC_StudentConnect.getConnection().createStatement();
+        // this one can't display the student don't have any grade, (+) has limit on second join (how to used?)
+//        String query = "Select st.student_id, first_name, last_name, gender, course_name, mark1, mark2 "
+//                    + "from student st, course crs, result rls "
+//                    + "where st.student_id = rls.student_id (+) and crs.course_id = rls.course_id "
+//                    + "order by st.student_id";
+        
+        
+        String query = "Select st.student_id, first_name, last_name, gender, course_name, mark1, mark2 "
+                    + "from student st left join course crs on st.STUDENT_ID = crs.COURSE_ID " 
+                    + "left join result rls on crs.course_id = rls.course_id "
+                    + "order by st.student_id";
+        
+        
+        System.out.println(query);
+         
+        ResultSet rslSet = statement.executeQuery(query);
+            
+        
+        while (rslSet.next()){
+            
+            System.out.print(rslSet.getInt("student_id") + ", ");
+            System.out.print(rslSet.getString("first_name")+ " ");
+            System.out.print(rslSet.getString("last_name")+ ", ");
+            System.out.print(rslSet.getString("gender")+ ", "); 
+            System.out.print(rslSet.getString("course_name")+ ", ");
+            System.out.print(rslSet.getInt("mark1")+ ", ");
+            System.out.print(rslSet.getInt("mark2"));
+            System.out.println();
+                              
+        }
+        
+        rslSet.close();
+        statement.close();
+        JDBC_StudentConnect.closeConnection();
+        
+    }
+         
 }
